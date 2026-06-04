@@ -68,6 +68,23 @@ export const subscriptionsRouter = router({
       return updated;
     }),
 
+  getCard: protectedProcedure
+    .input(z.object({ subscriptionId: z.string().uuid() }))
+    .query(async ({ ctx, input }) => {
+      const [card] = await ctx.db
+        .select()
+        .from(schema.virtualCards)
+        .where(
+          and(
+            eq(schema.virtualCards.subscriptionId, input.subscriptionId),
+            eq(schema.virtualCards.userId, ctx.user.id),
+          ),
+        )
+        .limit(1);
+
+      return card ?? null;
+    }),
+
   issueCard: protectedProcedure
     .input(z.object({ subscriptionId: z.string().uuid() }))
     .mutation(async ({ ctx, input }) => {

@@ -30,6 +30,6 @@ export type Events = {
   'bill.payment.failed': {
     data: { billId: string; attemptNo: number; failureCode: string };
   };
-  'plaid.recurring.updated': { data: { itemId: string } };
+  'plaid.recurring.updated': { data: { itemId: string; userId: string } };
   'kyc.session.completed': { data: { stripeSessionId: string; userId: string } };
 };

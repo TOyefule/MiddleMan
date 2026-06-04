@@ -61,6 +61,7 @@ alter table public.cancellation_requests    enable row level security;
 alter table public.admins                   enable row level security;
 alter table public.audit_log                enable row level security;
 alter table public.webhook_events           enable row level security;
+alter table public.plaid_items              enable row level security;
 
 -- ─── users ────────────────────────────────────────────────────────────────
 create policy users_self_read on public.users
@@ -167,6 +168,16 @@ create policy notif_prefs_self_all on public.notification_preferences
 
 -- ─── cancellation_requests ────────────────────────────────────────────────
 create policy cancel_self_all on public.cancellation_requests
+  for all to authenticated
+  using (user_id = public.current_user_id())
+  with check (user_id = public.current_user_id());
+
+-- ─── plaid_items ──────────────────────────────────────────────────────────
+create policy plaid_items_self_read on public.plaid_items
+  for select to authenticated
+  using (user_id = public.current_user_id() or public.is_admin());
+
+create policy plaid_items_self_write on public.plaid_items
   for all to authenticated
   using (user_id = public.current_user_id())
   with check (user_id = public.current_user_id());

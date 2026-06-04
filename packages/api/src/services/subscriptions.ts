@@ -42,3 +42,29 @@ export type SubscriptionCandidate = {
   nextExpectedAt?: Date;
   externalRef?: { plaidStreamId?: string; directProvider?: string };
 };
+
+export function mapFrequencyToPeriod(
+  freq: string,
+): 'monthly' | 'yearly' | 'weekly' {
+  const normalized = freq.toUpperCase();
+  if (normalized === 'ANNUAL' || normalized === 'YEARLY') return 'yearly';
+  if (normalized === 'WEEKLY') return 'weekly';
+  return 'monthly';
+}
+
+export function addFrequencyToDate(date: Date, freq: string): Date {
+  const nextDate = new Date(date);
+  const normalized = freq.toUpperCase();
+
+  if (normalized === 'WEEKLY') {
+    nextDate.setDate(nextDate.getDate() + 7);
+  } else if (normalized === 'SEMI_MONTHLY') {
+    nextDate.setDate(nextDate.getDate() + 15);
+  } else if (normalized === 'ANNUAL' || normalized === 'YEARLY') {
+    nextDate.setFullYear(nextDate.getFullYear() + 1);
+  } else {
+    nextDate.setMonth(nextDate.getMonth() + 1);
+  }
+
+  return nextDate;
+}

@@ -28,7 +28,19 @@ export async function POST(req: NextRequest) {
   });
 
   if (webhookType === 'RECURRING_TRANSACTIONS' && webhookCode === 'RECURRING_TRANSACTIONS_UPDATE') {
-    await inngest.send({ name: 'plaid.recurring.updated', data: { itemId } });
+    // Lookup userId from plaid_items table using itemId
+    const [plaidItem] = await db
+      .select({ userId: schema.plaidItems.userId })
+      .from(schema.plaidItems)
+      .where(eq(schema.plaidItems.itemId, itemId))
+      .limit(1);
+
+    if (plaidItem) {
+      await inngest.send({
+        name: 'plaid.recurring.updated',
+        data: { itemId, userId: plaidItem.userId },
+      });
+    }
   }
 
   await db

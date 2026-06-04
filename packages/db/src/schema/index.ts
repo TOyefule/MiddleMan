@@ -12,4 +12,5 @@ export * from './notifications';
 export * from './cancellations';
 export * from './admin';
 export * from './webhooks';
+export * from './plaid-items';
 export * from './enums';

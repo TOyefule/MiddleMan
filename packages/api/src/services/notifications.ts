@@ -38,7 +38,12 @@ export type NotificationTemplate =
   | 'bill_paid'
   | 'payment_failed_retry'
   | 'payment_failed_final'
-  | 'card_paused';
+  | 'card_paused'
+  | 'bill_adjusted_charge'
+  | 'bill_adjusted_credit'
+  | 'fee_waived'
+  | 'bill_marked_past_due'
+  | 'uncollectible_cleared';
 
 const TEMPLATE_CATEGORY: Record<NotificationTemplate, string> = {
   welcome: 'security',
@@ -52,6 +57,11 @@ const TEMPLATE_CATEGORY: Record<NotificationTemplate, string> = {
   payment_failed_retry: 'dunning',
   payment_failed_final: 'dunning',
   card_paused: 'sub_activity',
+  bill_adjusted_charge: 'billing',
+  bill_adjusted_credit: 'billing',
+  fee_waived: 'billing',
+  bill_marked_past_due: 'dunning',
+  uncollectible_cleared: 'dunning',
 };
 
 /**
@@ -152,24 +162,47 @@ async function sendSms(
   }
 }
 
-function subjectFor(template: NotificationTemplate, _data: Record<string, unknown>): string {
+function subjectFor(template: NotificationTemplate, data: Record<string, unknown>): string {
   switch (template) {
-    case 'welcome':
-      return 'Welcome to MiddleMan';
-    case 'bill_issued':
-      return 'Your MiddleMan bill is ready';
-    case 'payment_failed_retry':
-      return 'We couldn’t collect your bill — we’ll retry';
-    case 'payment_failed_final':
-      return 'Action needed: your MiddleMan bill is past due';
-    case 'cancellation_playbook':
-      return 'How to finish canceling your subscription';
+    case ‘welcome’:
+      return ‘Welcome to MiddleMan’;
+    case ‘bill_issued’:
+      return ‘Your MiddleMan bill is ready’;
+    case ‘payment_failed_retry’:
+      return ‘We couldn’t collect your bill — we’ll retry’;
+    case ‘payment_failed_final’:
+      return ‘Action needed: your MiddleMan bill is past due’;
+    case ‘cancellation_playbook’:
+      return ‘How to finish canceling your subscription’;
+    case ‘bill_adjusted_charge’:
+      return `Your bill has been adjusted: +${data.adjustmentAmount}`;
+    case ‘bill_adjusted_credit’:
+      return `Credit applied to your bill: ${data.creditAmount}`;
+    case ‘fee_waived’:
+      return `Great news: late fee waived (${data.waiverAmount})`;
+    case ‘bill_marked_past_due’:
+      return ‘Action needed: your MiddleMan bill is past due’;
+    case ‘uncollectible_cleared’:
+      return ‘We’re retrying your MiddleMan bill payment’;
     default:
-      return 'MiddleMan update';
+      return ‘MiddleMan update’;
   }
 }
 
-function textFor(template: NotificationTemplate, _data: Record<string, unknown>): string {
+function textFor(template: NotificationTemplate, data: Record<string, unknown>): string {
   // Plain-text fallback. Rich react-email templates live in packages/ui/emails.
-  return `MiddleMan: ${template} — see app for details.`;
+  switch (template) {
+    case 'bill_adjusted_charge':
+      return `Your MiddleMan bill has been adjusted by +${data.adjustmentAmount}. Reason: ${data.reason}. New total: ${data.newTotal}`;
+    case 'bill_adjusted_credit':
+      return `A credit of ${data.creditAmount} has been applied to your MiddleMan bill. Reason: ${data.reason}. New total: ${data.newTotal}`;
+    case 'fee_waived':
+      return `Your late fee of ${data.waiverAmount} has been waived. Reason: ${data.reason}. New total: ${data.newTotal}`;
+    case 'bill_marked_past_due':
+      return `Your MiddleMan bill of ${data.totalAmount} is past due by ${data.daysOverdue} days. Please pay as soon as possible.`;
+    case 'uncollectible_cleared':
+      return `We're retrying your MiddleMan bill of ${data.totalAmount}. Please ensure your payment method is up-to-date. Reason: ${data.reason}`;
+    default:
+      return `MiddleMan: ${template} — see app for details.`;
+  }
 }

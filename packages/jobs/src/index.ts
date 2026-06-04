@@ -8,6 +8,12 @@ import { nightlyBackupHealthcheck } from './functions/nightly-backup';
 import { cardAuthHandler, cardDeclineHandler } from './functions/card-auth';
 import { firstChargeValidator } from './functions/first-charge';
 import { paymentCollectionJob, paymentRetryJob } from './functions/payment-collection';
+import {
+  billAdjustedNotification,
+  billFeeWaivedNotification,
+  billMarkedPastDueNotification,
+  billUncollectibleClearedNotification,
+} from './functions/bill-notifications';
 
 export const functions = [
   cycleCloseScheduler,
@@ -20,4 +26,8 @@ export const functions = [
   cardAuthHandler,
   cardDeclineHandler,
   firstChargeValidator,
+  billAdjustedNotification,
+  billFeeWaivedNotification,
+  billMarkedPastDueNotification,
+  billUncollectibleClearedNotification,
 ];

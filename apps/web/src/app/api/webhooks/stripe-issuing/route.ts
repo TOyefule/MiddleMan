@@ -52,7 +52,7 @@ export async function POST(req: NextRequest) {
       return NextResponse.json({ approved: false, reason: 'card_inactive' });
     }
 
-    // Check per-user collective monthly cap
+    // Check per-user collective monthly cap and subscription status
     const db = getEdgeDb();
     const [user] = await db
       .select({
@@ -65,6 +65,22 @@ export async function POST(req: NextRequest) {
 
     if (!user || (user.spent + amountCents) > user.cap) {
       return NextResponse.json({ approved: false, reason: 'cap_exceeded' });
+    }
+
+    // Verify subscription status (should be 'active', not 'paused' or 'canceled')
+    const [subscription] = await db
+      .select({ status: schema.subscriptions.status })
+      .from(schema.subscriptions)
+      .where(eq(schema.subscriptions.id, card.subscriptionId))
+      .limit(1);
+
+    if (!subscription || subscription.status !== 'active') {
+      return NextResponse.json({ approved: false, reason: 'subscription_inactive' });
+    }
+
+    // Check per-card monthly spending cap
+    if (card.perCycleCapCents && (card.currentCycleSpentCents + amountCents) > card.perCycleCapCents) {
+      return NextResponse.json({ approved: false, reason: 'card_cap_exceeded' });
     }
 
     // Approve — async work via Inngest

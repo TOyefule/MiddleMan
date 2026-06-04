@@ -5,6 +5,8 @@ import { cycleCloseScheduler, cycleCloseWorker } from './functions/cycle-close';
 import { dunningStateMachine } from './functions/dunning';
 import { plaidRecurringSync } from './functions/plaid-recurring-sync';
 import { nightlyBackupHealthcheck } from './functions/nightly-backup';
+import { cardAuthHandler, cardDeclineHandler } from './functions/card-auth';
+import { firstChargeValidator } from './functions/first-charge';
 
 export const functions = [
   cycleCloseScheduler,
@@ -12,4 +14,7 @@ export const functions = [
   dunningStateMachine,
   plaidRecurringSync,
   nightlyBackupHealthcheck,
+  cardAuthHandler,
+  cardDeclineHandler,
+  firstChargeValidator,
 ];

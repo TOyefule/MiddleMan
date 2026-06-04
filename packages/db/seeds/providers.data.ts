@@ -1,13 +1,17 @@
 /**
  * Provider Catalog Data
  *
- * Contains 60+ common US subscription services with fuzzy matching patterns,
- * logos, cancellation playbooks, and plan pricing.
+ * Comprehensive 60+ subscription services with:
+ * - Category-based organization (SVOD, Live TV, FAST, Music, Specialty)
+ * - Realistic merchant patterns for bank transaction matching
+ * - Accurate pricing tiers and billing periods
+ * - Step-by-step cancellation playbooks for ops reference
  */
 
 export interface ProviderData {
   slug: string;
   displayName: string;
+  category: string;
   logoUrl: string;
   homepageUrl: string;
   cancelUrl: string;
@@ -23,532 +27,761 @@ export interface ProviderData {
 }
 
 export const providersData: ProviderData[] = [
+  // ─────────────────────────────────────────────────────────────────
+  // SVOD (Subscription Video On-Demand)
+  // ─────────────────────────────────────────────────────────────────
+
   {
     slug: 'netflix',
     displayName: 'Netflix',
+    category: 'Video & Entertainment (SVOD)',
     logoUrl: 'https://logo.clearbit.com/netflix.com',
     homepageUrl: 'https://netflix.com',
     cancelUrl: 'https://help.netflix.com/en/node/412',
     cardAbuseRisk: 'low',
-    merchantStringPatterns: ['nflx', 'netflix', 'netflix.com', 'netflix subscription'],
-    cancelPlaybookMd: `## Canceling Netflix\n\n1. Go to netflix.com and sign in\n2. Navigate to Account Settings → Membership & Billing\n3. Click "Cancel your membership"\n4. Confirm cancellation on the next page`,
+    merchantStringPatterns: [
+      'nflx',
+      'netflix',
+      'netflix.com',
+      'netflix subscription',
+      'netflix.com charge',
+    ],
+    cancelPlaybookMd: `## Canceling Netflix
+
+1. Go to netflix.com and sign in
+2. Navigate to Account Settings → Membership & Billing
+3. Click "Cancel your membership"
+4. Review cancellation notice and confirm`,
     plans: [
+      { canonicalName: 'Ad-Supported', priceCents: 699, currency: 'USD', billingPeriod: 'monthly' },
       { canonicalName: 'Standard', priceCents: 1550, currency: 'USD', billingPeriod: 'monthly' },
       { canonicalName: 'Premium', priceCents: 2299, currency: 'USD', billingPeriod: 'monthly' },
-      { canonicalName: 'Ad-Supported', priceCents: 699, currency: 'USD', billingPeriod: 'monthly' },
     ],
   },
+
+  {
+    slug: 'amazon-prime-video',
+    displayName: 'Amazon Prime Video',
+    category: 'Video & Entertainment (SVOD)',
+    logoUrl: 'https://logo.clearbit.com/amazon.com',
+    homepageUrl: 'https://amazon.com/primevideo',
+    cancelUrl: 'https://www.amazon.com/gp/help/customer/display.html?nodeId=AKJC74KZFBQKQ',
+    cardAbuseRisk: 'low',
+    merchantStringPatterns: [
+      'prime video',
+      'amazon prime',
+      'amzn',
+      'amazon video',
+      'amazon.com prime',
+    ],
+    cancelPlaybookMd: `## Canceling Amazon Prime Video
+
+1. Go to amazon.com and sign in
+2. Navigate to Account → Prime Membership
+3. Click "Manage Membership"
+4. Select "Cancel membership" or "End membership"`,
+    plans: [
+      { canonicalName: 'Monthly', priceCents: 1499, currency: 'USD', billingPeriod: 'monthly' },
+      { canonicalName: 'Annual', priceCents: 14900, currency: 'USD', billingPeriod: 'yearly' },
+    ],
+  },
+
+  {
+    slug: 'disney-plus',
+    displayName: 'Disney+',
+    category: 'Video & Entertainment (SVOD)',
+    logoUrl: 'https://logo.clearbit.com/disneyplus.com',
+    homepageUrl: 'https://disneyplus.com',
+    cancelUrl: 'https://help.disneyplus.com/csp?id=csp_article_content&sys_kb_id=fa6bc6711b67a814da6b57b2604bcb88',
+    cardAbuseRisk: 'low',
+    merchantStringPatterns: [
+      'disney+',
+      'disneyplus',
+      'disney plus',
+      'disney streaming',
+      'the walt disney company',
+    ],
+    cancelPlaybookMd: `## Canceling Disney+
+
+1. Go to disneyplus.com and sign in
+2. Click your profile icon → Account
+3. Select "Subscription" → "Cancel Subscription"
+4. Confirm the cancellation`,
+    plans: [
+      { canonicalName: 'Ad-Supported', priceCents: 799, currency: 'USD', billingPeriod: 'monthly' },
+      { canonicalName: 'Premium', priceCents: 1399, currency: 'USD', billingPeriod: 'monthly' },
+      { canonicalName: 'Premium Annual', priceCents: 13899, currency: 'USD', billingPeriod: 'yearly' },
+    ],
+  },
+
+  {
+    slug: 'max',
+    displayName: 'Max (HBO Max)',
+    category: 'Video & Entertainment (SVOD)',
+    logoUrl: 'https://logo.clearbit.com/max.com',
+    homepageUrl: 'https://max.com',
+    cancelUrl: 'https://help.max.com/en/article/manage-billing-and-account',
+    cardAbuseRisk: 'low',
+    merchantStringPatterns: ['max', 'hbo max', 'hbo.com', 'warner media', 'discovery+'],
+    cancelPlaybookMd: `## Canceling Max
+
+1. Go to max.com and sign in
+2. Navigate to Settings → Account
+3. Select "Cancel Subscription"
+4. Choose reason (optional) and confirm`,
+    plans: [
+      { canonicalName: 'With Ads', priceCents: 999, currency: 'USD', billingPeriod: 'monthly' },
+      { canonicalName: 'Ad-Free', priceCents: 1999, currency: 'USD', billingPeriod: 'monthly' },
+      { canonicalName: 'Ad-Free Annual', priceCents: 19999, currency: 'USD', billingPeriod: 'yearly' },
+    ],
+  },
+
+  {
+    slug: 'hulu',
+    displayName: 'Hulu',
+    category: 'Video & Entertainment (SVOD)',
+    logoUrl: 'https://logo.clearbit.com/hulu.com',
+    homepageUrl: 'https://hulu.com',
+    cancelUrl: 'https://help.hulu.com/en-US/manage-billing-and-account/change-or-cancel-subscription',
+    cardAbuseRisk: 'low',
+    merchantStringPatterns: ['hulu', 'hulu.com', 'hulu subscription', 'hulu + live tv'],
+    cancelPlaybookMd: `## Canceling Hulu
+
+1. Go to hulu.com and sign in
+2. Navigate to Account → Manage Your Plan
+3. Select "Cancel your plan"
+4. Confirm cancellation`,
+    plans: [
+      { canonicalName: 'Ad-Supported', priceCents: 799, currency: 'USD', billingPeriod: 'monthly' },
+      { canonicalName: 'Premium', priceCents: 1799, currency: 'USD', billingPeriod: 'monthly' },
+    ],
+  },
+
+  {
+    slug: 'apple-tv-plus',
+    displayName: 'Apple TV+',
+    category: 'Video & Entertainment (SVOD)',
+    logoUrl: 'https://logo.clearbit.com/apple.com',
+    homepageUrl: 'https://tv.apple.com',
+    cancelUrl: 'https://support.apple.com/en-us/HT210624',
+    cardAbuseRisk: 'low',
+    merchantStringPatterns: ['apple tv+', 'apple tv', 'appletv', 'itunes apple tv'],
+    cancelPlaybookMd: `## Canceling Apple TV+
+
+1. Go to settings.apple.com or open Apple TV app
+2. Navigate to Account → Subscriptions
+3. Select Apple TV+ → Manage
+4. Click "Cancel Subscription"`,
+    plans: [
+      { canonicalName: 'Monthly', priceCents: 999, currency: 'USD', billingPeriod: 'monthly' },
+      { canonicalName: 'Annual', priceCents: 9999, currency: 'USD', billingPeriod: 'yearly' },
+    ],
+  },
+
+  {
+    slug: 'paramount-plus',
+    displayName: 'Paramount+',
+    category: 'Video & Entertainment (SVOD)',
+    logoUrl: 'https://logo.clearbit.com/paramountplus.com',
+    homepageUrl: 'https://paramountplus.com',
+    cancelUrl: 'https://help.paramountplus.com/en/article/how-do-i-cancel-my-subscription',
+    cardAbuseRisk: 'low',
+    merchantStringPatterns: [
+      'paramount+',
+      'paramountplus',
+      'paramount plus',
+      'cbs all access',
+      'paramount streaming',
+    ],
+    cancelPlaybookMd: `## Canceling Paramount+
+
+1. Go to paramountplus.com and sign in
+2. Click your profile → Account
+3. Select "Cancel Subscription"
+4. Confirm the cancellation`,
+    plans: [
+      { canonicalName: 'Essential', priceCents: 699, currency: 'USD', billingPeriod: 'monthly' },
+      { canonicalName: 'Premium', priceCents: 1299, currency: 'USD', billingPeriod: 'monthly' },
+    ],
+  },
+
+  {
+    slug: 'peacock',
+    displayName: 'Peacock',
+    category: 'Video & Entertainment (SVOD)',
+    logoUrl: 'https://logo.clearbit.com/peacocktv.com',
+    homepageUrl: 'https://peacocktv.com',
+    cancelUrl: 'https://www.peacocktv.com/help/article/manage-billing-and-account-settings',
+    cardAbuseRisk: 'low',
+    merchantStringPatterns: ['peacock', 'peacocktv', 'peacock premium', 'nbcuniversal'],
+    cancelPlaybookMd: `## Canceling Peacock
+
+1. Go to peacocktv.com and sign in
+2. Navigate to Account Settings
+3. Select "Manage Subscription"
+4. Click "Cancel Subscription"`,
+    plans: [
+      { canonicalName: 'Free', priceCents: 0, currency: 'USD', billingPeriod: 'monthly' },
+      { canonicalName: 'Premium', priceCents: 699, currency: 'USD', billingPeriod: 'monthly' },
+      { canonicalName: 'Premium Plus', priceCents: 1199, currency: 'USD', billingPeriod: 'monthly' },
+    ],
+  },
+
+  // ─────────────────────────────────────────────────────────────────
+  // Live TV & Sports
+  // ─────────────────────────────────────────────────────────────────
+
+  {
+    slug: 'youtube-tv',
+    displayName: 'YouTube TV',
+    category: 'Live TV & Sports',
+    logoUrl: 'https://logo.clearbit.com/youtube.com',
+    homepageUrl: 'https://tv.youtube.com',
+    cancelUrl: 'https://support.google.com/youtubetv/answer/7129025',
+    cardAbuseRisk: 'low',
+    merchantStringPatterns: ['youtube tv', 'youtubetv', 'google youtube', 'google television'],
+    cancelPlaybookMd: `## Canceling YouTube TV
+
+1. Go to tv.youtube.com and sign in
+2. Navigate to Settings → Memberships
+3. Select YouTube TV → Manage
+4. Click "Cancel membership"`,
+    plans: [
+      { canonicalName: 'Standard', priceCents: 7299, currency: 'USD', billingPeriod: 'monthly' },
+    ],
+  },
+
+  {
+    slug: 'hulu-live-tv',
+    displayName: 'Hulu + Live TV',
+    category: 'Live TV & Sports',
+    logoUrl: 'https://logo.clearbit.com/hulu.com',
+    homepageUrl: 'https://hulu.com/live-tv',
+    cancelUrl: 'https://help.hulu.com/en-US/manage-billing-and-account/change-or-cancel-subscription',
+    cardAbuseRisk: 'low',
+    merchantStringPatterns: ['hulu live', 'hulu + live tv', 'hulu live tv'],
+    cancelPlaybookMd: `## Canceling Hulu + Live TV
+
+1. Go to hulu.com and sign in
+2. Navigate to Account → Manage Your Plan
+3. Select "Cancel your plan"
+4. Confirm cancellation`,
+    plans: [
+      { canonicalName: 'With Ads', priceCents: 8299, currency: 'USD', billingPeriod: 'monthly' },
+      { canonicalName: 'No Ads', priceCents: 14999, currency: 'USD', billingPeriod: 'monthly' },
+    ],
+  },
+
+  {
+    slug: 'fubo',
+    displayName: 'FuboTV',
+    category: 'Live TV & Sports',
+    logoUrl: 'https://logo.clearbit.com/fubo.tv',
+    homepageUrl: 'https://fubo.tv',
+    cancelUrl: 'https://support.fubo.tv/hc/en-us/articles/360051156491-How-do-I-cancel-my-subscription-',
+    cardAbuseRisk: 'low',
+    merchantStringPatterns: ['fubo', 'fubotv', 'fubo.tv', 'fubo streaming'],
+    cancelPlaybookMd: `## Canceling FuboTV
+
+1. Go to fubo.tv and sign in
+2. Navigate to Settings → Billing
+3. Select "Manage Subscription"
+4. Click "Cancel Subscription"`,
+    plans: [
+      { canonicalName: 'Standard', priceCents: 7999, currency: 'USD', billingPeriod: 'monthly' },
+      { canonicalName: 'Elite', priceCents: 10999, currency: 'USD', billingPeriod: 'monthly' },
+    ],
+  },
+
+  {
+    slug: 'sling-tv',
+    displayName: 'Sling TV',
+    category: 'Live TV & Sports',
+    logoUrl: 'https://logo.clearbit.com/sling.com',
+    homepageUrl: 'https://sling.com',
+    cancelUrl: 'https://help.sling.com/en/article/how-do-i-cancel-my-sling-subscription',
+    cardAbuseRisk: 'low',
+    merchantStringPatterns: ['sling', 'sling tv', 'sling.com', 'sling television'],
+    cancelPlaybookMd: `## Canceling Sling TV
+
+1. Go to sling.com and sign in
+2. Click your profile → Manage Plan
+3. Select "Cancel plan"
+4. Confirm cancellation`,
+    plans: [
+      { canonicalName: 'Sling Orange', priceCents: 4099, currency: 'USD', billingPeriod: 'monthly' },
+      { canonicalName: 'Sling Blue', priceCents: 4099, currency: 'USD', billingPeriod: 'monthly' },
+      { canonicalName: 'Orange + Blue', priceCents: 6499, currency: 'USD', billingPeriod: 'monthly' },
+    ],
+  },
+
+  {
+    slug: 'espn-plus',
+    displayName: 'ESPN+',
+    category: 'Live TV & Sports',
+    logoUrl: 'https://logo.clearbit.com/espn.com',
+    homepageUrl: 'https://espnplus.espn.com',
+    cancelUrl: 'https://support.espn.com/hc/en-us/articles/206419633-How-do-I-cancel-my-ESPN-subscription-',
+    cardAbuseRisk: 'low',
+    merchantStringPatterns: ['espn+', 'espn plus', 'espnplus', 'espn.com plus'],
+    cancelPlaybookMd: `## Canceling ESPN+
+
+1. Go to espnplus.espn.com and sign in
+2. Navigate to Profile → Manage Subscription
+3. Select "Cancel Subscription"
+4. Confirm cancellation`,
+    plans: [
+      { canonicalName: 'Monthly', priceCents: 1099, currency: 'USD', billingPeriod: 'monthly' },
+      { canonicalName: 'Annual', priceCents: 10999, currency: 'USD', billingPeriod: 'yearly' },
+    ],
+  },
+
+  // ─────────────────────────────────────────────────────────────────
+  // Free & Ad-Supported (FAST)
+  // ─────────────────────────────────────────────────────────────────
+
+  {
+    slug: 'tubi',
+    displayName: 'Tubi',
+    category: 'Free & Ad-Supported (FAST)',
+    logoUrl: 'https://logo.clearbit.com/tubi.tv',
+    homepageUrl: 'https://tubi.tv',
+    cancelUrl: 'https://tubi.tv/',
+    cardAbuseRisk: 'low',
+    merchantStringPatterns: ['tubi', 'tubi.tv', 'tubi streaming', 'tubi ads'],
+    cancelPlaybookMd: `## Tubi (Free Service)
+
+Tubi is free with ads. No subscription or cancellation needed.`,
+    plans: [
+      { canonicalName: 'Free', priceCents: 0, currency: 'USD', billingPeriod: 'monthly' },
+    ],
+  },
+
+  {
+    slug: 'pluto-tv',
+    displayName: 'Pluto TV',
+    category: 'Free & Ad-Supported (FAST)',
+    logoUrl: 'https://logo.clearbit.com/pluto.tv',
+    homepageUrl: 'https://pluto.tv',
+    cancelUrl: 'https://pluto.tv/',
+    cardAbuseRisk: 'low',
+    merchantStringPatterns: ['pluto', 'pluto tv', 'pluto.tv', 'viacom pluto'],
+    cancelPlaybookMd: `## Pluto TV (Free Service)
+
+Pluto TV is free with ads. No subscription or cancellation needed.`,
+    plans: [
+      { canonicalName: 'Free', priceCents: 0, currency: 'USD', billingPeriod: 'monthly' },
+    ],
+  },
+
+  {
+    slug: 'roku-channel',
+    displayName: 'The Roku Channel',
+    category: 'Free & Ad-Supported (FAST)',
+    logoUrl: 'https://logo.clearbit.com/roku.com',
+    homepageUrl: 'https://therokuchannel.roku.com',
+    cancelUrl: 'https://therokuchannel.roku.com/',
+    cardAbuseRisk: 'low',
+    merchantStringPatterns: ['roku channel', 'therokuchannel', 'roku streaming'],
+    cancelPlaybookMd: `## The Roku Channel (Free Service)
+
+The Roku Channel offers free content with ads. Premium content available separately.`,
+    plans: [
+      { canonicalName: 'Free', priceCents: 0, currency: 'USD', billingPeriod: 'monthly' },
+    ],
+  },
+
+  {
+    slug: 'criterion-channel',
+    displayName: 'The Criterion Channel',
+    category: 'Specialty & Niche',
+    logoUrl: 'https://logo.clearbit.com/criterionchannelcom',
+    homepageUrl: 'https://criterionchannelcom',
+    cancelUrl: 'https://criterionchannelcom/support',
+    cardAbuseRisk: 'low',
+    merchantStringPatterns: ['criterion', 'criterion channel', 'criterion films'],
+    cancelPlaybookMd: `## Canceling The Criterion Channel
+
+1. Go to criterionchannelcom and sign in
+2. Navigate to Account Settings
+3. Select "Cancel Subscription"
+4. Confirm cancellation`,
+    plans: [
+      { canonicalName: 'Monthly', priceCents: 1099, currency: 'USD', billingPeriod: 'monthly' },
+      { canonicalName: 'Annual', priceCents: 10999, currency: 'USD', billingPeriod: 'yearly' },
+    ],
+  },
+
+  {
+    slug: 'shudder',
+    displayName: 'Shudder',
+    category: 'Specialty & Niche',
+    logoUrl: 'https://logo.clearbit.com/shudder.com',
+    homepageUrl: 'https://shudder.com',
+    cancelUrl: 'https://help.shudder.com/hc/en-us/articles/360018140814-How-do-I-cancel-my-subscription-',
+    cardAbuseRisk: 'low',
+    merchantStringPatterns: ['shudder', 'shudder.com', 'shudder horror', 'amcplus shudder'],
+    cancelPlaybookMd: `## Canceling Shudder
+
+1. Go to shudder.com and sign in
+2. Navigate to Account Settings
+3. Select "Cancel Subscription"
+4. Confirm cancellation`,
+    plans: [
+      { canonicalName: 'Monthly', priceCents: 699, currency: 'USD', billingPeriod: 'monthly' },
+      { canonicalName: 'Annual', priceCents: 5999, currency: 'USD', billingPeriod: 'yearly' },
+    ],
+  },
+
+  {
+    slug: 'crunchyroll',
+    displayName: 'Crunchyroll',
+    category: 'Specialty & Niche',
+    logoUrl: 'https://logo.clearbit.com/crunchyroll.com',
+    homepageUrl: 'https://crunchyroll.com',
+    cancelUrl: 'https://www.crunchyroll.com/en/account/membership',
+    cardAbuseRisk: 'low',
+    merchantStringPatterns: ['crunchyroll', 'crunchyroll.com', 'crunchyroll anime'],
+    cancelPlaybookMd: `## Canceling Crunchyroll
+
+1. Go to crunchyroll.com and sign in
+2. Navigate to Account → Subscription
+3. Select "Cancel Subscription"
+4. Confirm cancellation`,
+    plans: [
+      { canonicalName: 'Fan', priceCents: 1199, currency: 'USD', billingPeriod: 'monthly' },
+      { canonicalName: 'Mega Fan', priceCents: 1499, currency: 'USD', billingPeriod: 'monthly' },
+    ],
+  },
+
+  // ─────────────────────────────────────────────────────────────────
+  // Music & Audio
+  // ─────────────────────────────────────────────────────────────────
+
   {
     slug: 'spotify',
     displayName: 'Spotify',
+    category: 'Music & Audio',
     logoUrl: 'https://logo.clearbit.com/spotify.com',
     homepageUrl: 'https://spotify.com',
     cancelUrl: 'https://support.spotify.com/us/article/close-account/',
     cardAbuseRisk: 'low',
     merchantStringPatterns: ['spotify', 'spotify.com', 'spotify premium', 'spotify music'],
-    cancelPlaybookMd: `## Canceling Spotify\n\n1. Open Spotify app and sign in\n2. Go to Account → Subscription → Manage\n3. Click "Edit subscription"\n4. Choose "Cancel subscription" and confirm`,
+    cancelPlaybookMd: `## Canceling Spotify
+
+1. Go to spotify.com and sign in
+2. Navigate to Account → Subscription
+3. Click "Cancel Premium"
+4. Confirm cancellation`,
     plans: [
-      { canonicalName: 'Individual', priceCents: 1199, currency: 'USD', billingPeriod: 'monthly' },
-      { canonicalName: 'Family', priceCents: 1899, currency: 'USD', billingPeriod: 'monthly' },
-      { canonicalName: 'Duo', priceCents: 1599, currency: 'USD', billingPeriod: 'monthly' },
+      { canonicalName: 'Free', priceCents: 0, currency: 'USD', billingPeriod: 'monthly' },
+      { canonicalName: 'Premium', priceCents: 1199, currency: 'USD', billingPeriod: 'monthly' },
+      { canonicalName: 'Premium Annual', priceCents: 11999, currency: 'USD', billingPeriod: 'yearly' },
     ],
   },
-  {
-    slug: 'aws',
-    displayName: 'Amazon Web Services',
-    logoUrl: 'https://logo.clearbit.com/aws.amazon.com',
-    homepageUrl: 'https://aws.amazon.com',
-    cancelUrl: 'https://docs.aws.amazon.com/awsaccountbilling/latest/aboutv2/close-account.html',
-    cardAbuseRisk: 'medium',
-    merchantStringPatterns: ['aws', 'amazon web services', 'aws.amazon.com', 'amazon services', 'ec2', 's3'],
-    cancelPlaybookMd: `## Canceling AWS\n\n1. Go to AWS Billing console\n2. Under "Account" select "Close Account"\n3. Read and accept terms\n4. Click "Close Account"\n\n⚠️ This action deletes all AWS resources.`,
-    plans: [
-      { canonicalName: 'Pay-as-you-go', priceCents: 0, currency: 'USD', billingPeriod: 'monthly' },
-      { canonicalName: 'Reserved Instance', priceCents: 30000, currency: 'USD', billingPeriod: 'yearly' },
-    ],
-  },
+
   {
     slug: 'apple-music',
     displayName: 'Apple Music',
+    category: 'Music & Audio',
     logoUrl: 'https://logo.clearbit.com/apple.com',
     homepageUrl: 'https://music.apple.com',
-    cancelUrl: 'https://support.apple.com/en-us/HT207028',
+    cancelUrl: 'https://support.apple.com/en-us/HT201272',
     cardAbuseRisk: 'low',
-    merchantStringPatterns: ['apple music', 'apple', 'itunes', 'apple.com', 'music subscription'],
-    cancelPlaybookMd: `## Canceling Apple Music\n\n1. Open Settings or Apple Music app\n2. Tap your profile icon\n3. Select "Subscriptions" → "Apple Music"\n4. Tap "Cancel Subscription"`,
+    merchantStringPatterns: ['apple music', 'itunes music', 'apple.com music'],
+    cancelPlaybookMd: `## Canceling Apple Music
+
+1. Open Settings on your device or go to settings.apple.com
+2. Navigate to Subscriptions → Apple Music
+3. Click "Manage" → "Cancel Subscription"
+4. Confirm cancellation`,
+    plans: [
+      { canonicalName: 'Individual', priceCents: 1199, currency: 'USD', billingPeriod: 'monthly' },
+      { canonicalName: 'Family', priceCents: 1799, currency: 'USD', billingPeriod: 'monthly' },
+    ],
+  },
+
+  {
+    slug: 'youtube-music',
+    displayName: 'YouTube Music',
+    category: 'Music & Audio',
+    logoUrl: 'https://logo.clearbit.com/youtube.com',
+    homepageUrl: 'https://music.youtube.com',
+    cancelUrl: 'https://support.google.com/youtubemusic/answer/4804812',
+    cardAbuseRisk: 'low',
+    merchantStringPatterns: [
+      'youtube music',
+      'youtube music premium',
+      'google youtube music',
+    ],
+    cancelPlaybookMd: `## Canceling YouTube Music
+
+1. Go to music.youtube.com and sign in
+2. Navigate to Your Profile → Paid Memberships
+3. Select YouTube Music Premium → Manage
+4. Click "Cancel Membership"`,
+    plans: [
+      { canonicalName: 'Premium', priceCents: 1199, currency: 'USD', billingPeriod: 'monthly' },
+      { canonicalName: 'Premium Family', priceCents: 1799, currency: 'USD', billingPeriod: 'monthly' },
+    ],
+  },
+
+  {
+    slug: 'amazon-music-unlimited',
+    displayName: 'Amazon Music Unlimited',
+    category: 'Music & Audio',
+    logoUrl: 'https://logo.clearbit.com/amazon.com',
+    homepageUrl: 'https://amazon.com/music/unlimited',
+    cancelUrl: 'https://www.amazon.com/gp/help/customer/display.html?nodeId=201910280',
+    cardAbuseRisk: 'low',
+    merchantStringPatterns: [
+      'amazon music',
+      'amazon music unlimited',
+      'amzn music',
+    ],
+    cancelPlaybookMd: `## Canceling Amazon Music Unlimited
+
+1. Go to amazon.com and sign in
+2. Navigate to Your Account → Music Library
+3. Select "Amazon Music Unlimited" → Manage
+4. Click "Cancel Membership"`,
     plans: [
       { canonicalName: 'Individual', priceCents: 1099, currency: 'USD', billingPeriod: 'monthly' },
       { canonicalName: 'Family', priceCents: 1699, currency: 'USD', billingPeriod: 'monthly' },
     ],
   },
+
+  // ─────────────────────────────────────────────────────────────────
+  // Productivity & Services (for completeness)
+  // ─────────────────────────────────────────────────────────────────
+
   {
-    slug: 'adobe',
+    slug: 'adobe-creative-cloud',
     displayName: 'Adobe Creative Cloud',
+    category: 'Productivity',
     logoUrl: 'https://logo.clearbit.com/adobe.com',
-    homepageUrl: 'https://adobe.com',
-    cancelUrl: 'https://helpx.adobe.com/manage-account/using/cancel-subscription.html',
-    cardAbuseRisk: 'low',
-    merchantStringPatterns: ['adobe', 'adobe.com', 'creative cloud', 'acrobat', 'photoshop'],
-    cancelPlaybookMd: `## Canceling Adobe\n\n1. Go to adobe.com and sign in\n2. Navigate to your Account → Subscriptions\n3. Click on your Creative Cloud plan\n4. Click "Cancel Plan"`,
+    homepageUrl: 'https://adobe.com/creativecloud',
+    cancelUrl: 'https://helpx.adobe.com/manage-account/using-account.html',
+    cardAbuseRisk: 'medium',
+    merchantStringPatterns: [
+      'adobe',
+      'adobe.com',
+      'creative cloud',
+      'adobe creative',
+    ],
+    cancelPlaybookMd: `## Canceling Adobe Creative Cloud
+
+1. Go to adobe.com and sign in
+2. Navigate to Account → Plans → Manage Plan
+3. Click "Cancel Plan"
+4. Follow the cancellation flow`,
     plans: [
-      { canonicalName: 'Photographer', priceCents: 999, currency: 'USD', billingPeriod: 'monthly' },
-      { canonicalName: 'All Apps', priceCents: 5499, currency: 'USD', billingPeriod: 'monthly' },
-      { canonicalName: 'Single App', priceCents: 2099, currency: 'USD', billingPeriod: 'monthly' },
+      { canonicalName: 'Single App', priceCents: 2599, currency: 'USD', billingPeriod: 'monthly' },
+      { canonicalName: 'All Apps', priceCents: 5999, currency: 'USD', billingPeriod: 'monthly' },
     ],
   },
+
   {
     slug: 'microsoft-365',
     displayName: 'Microsoft 365',
+    category: 'Productivity',
     logoUrl: 'https://logo.clearbit.com/microsoft.com',
     homepageUrl: 'https://microsoft.com/microsoft-365',
-    cancelUrl: 'https://support.microsoft.com/en-us/office/cancel-your-microsoft-365-subscription-46e2634e-e17e-48de-90da-8e6ff96250ca',
-    cardAbuseRisk: 'low',
-    merchantStringPatterns: ['microsoft 365', 'microsoft', 'office365', 'm365', 'office subscription'],
-    cancelPlaybookMd: `## Canceling Microsoft 365\n\n1. Go to account.microsoft.com\n2. Select "Subscriptions" → "Your Products"\n3. Find your Microsoft 365 subscription\n4. Click "Manage" → "Cancel subscription"`,
+    cancelUrl: 'https://support.microsoft.com/en-us/account-billing/manage-your-microsoft-subscription-61a7a7f3-3beb-4c97-a5a6-0fcc0dfca4ce',
+    cardAbuseRisk: 'medium',
+    merchantStringPatterns: [
+      'microsoft 365',
+      'microsoft office',
+      'office 365',
+      'm365',
+      'ms office',
+    ],
+    cancelPlaybookMd: `## Canceling Microsoft 365
+
+1. Go to account.microsoft.com and sign in
+2. Navigate to Subscriptions
+3. Select Microsoft 365 → Manage Subscription
+4. Click "Cancel Subscription"`,
     plans: [
-      { canonicalName: 'Personal', priceCents: 699, currency: 'USD', billingPeriod: 'monthly' },
-      { canonicalName: 'Family', priceCents: 999, currency: 'USD', billingPeriod: 'monthly' },
+      { canonicalName: 'Personal', priceCents: 9999, currency: 'USD', billingPeriod: 'yearly' },
+      { canonicalName: 'Family', priceCents: 14999, currency: 'USD', billingPeriod: 'yearly' },
     ],
   },
+
   {
     slug: 'google-one',
     displayName: 'Google One',
+    category: 'Productivity',
     logoUrl: 'https://logo.clearbit.com/google.com',
     homepageUrl: 'https://one.google.com',
-    cancelUrl: 'https://support.google.com/googleone/answer/9176446',
+    cancelUrl: 'https://support.google.com/one/answer/7644632',
     cardAbuseRisk: 'low',
-    merchantStringPatterns: ['google one', 'google', 'google drive', 'google storage', 'google cloud'],
-    cancelPlaybookMd: `## Canceling Google One\n\n1. Go to one.google.com\n2. Click "Settings" in the menu\n3. Select "Benefits and payment" → "Manage plan"\n4. Click "Cancel membership"`,
+    merchantStringPatterns: [
+      'google one',
+      'google drive storage',
+      'google cloud storage',
+    ],
+    cancelPlaybookMd: `## Canceling Google One
+
+1. Go to one.google.com and sign in
+2. Navigate to Membership Details
+3. Click "Cancel Membership"
+4. Confirm cancellation`,
     plans: [
-      { canonicalName: '100GB', priceCents: 199, currency: 'USD', billingPeriod: 'month' },
-      { canonicalName: '2TB', priceCents: 999, currency: 'USD', billingPeriod: 'month' },
-      { canonicalName: '2TB', priceCents: 9999, currency: 'USD', billingPeriod: 'yearly' },
+      { canonicalName: '100 GB', priceCents: 199, currency: 'USD', billingPeriod: 'monthly' },
+      { canonicalName: '200 GB', priceCents: 299, currency: 'USD', billingPeriod: 'monthly' },
+      { canonicalName: '2 TB', priceCents: 999, currency: 'USD', billingPeriod: 'monthly' },
     ],
   },
+
   {
-    slug: 'dropbox',
-    displayName: 'Dropbox',
+    slug: 'dropbox-plus',
+    displayName: 'Dropbox Plus',
+    category: 'Productivity',
     logoUrl: 'https://logo.clearbit.com/dropbox.com',
-    homepageUrl: 'https://dropbox.com',
-    cancelUrl: 'https://help.dropbox.com/en_US/account/downgrade-or-cancel-subscription',
+    homepageUrl: 'https://dropbox.com/plans',
+    cancelUrl: 'https://help.dropbox.com/account-billing/manage-account/close-account',
     cardAbuseRisk: 'low',
-    merchantStringPatterns: ['dropbox', 'dropbox.com', 'dropbox storage', 'dropbox plus'],
-    cancelPlaybookMd: `## Canceling Dropbox\n\n1. Go to dropbox.com and sign in\n2. Click your profile icon → Settings\n3. Navigate to Billing → Plan\n4. Click "Delete your Dropbox account" or downgrade`,
+    merchantStringPatterns: ['dropbox', 'dropbox.com', 'dropbox plus'],
+    cancelPlaybookMd: `## Canceling Dropbox Plus
+
+1. Go to dropbox.com and sign in
+2. Navigate to Settings → Plans
+3. Click "Downgrade"
+4. Select Basic plan and confirm`,
     plans: [
       { canonicalName: 'Plus', priceCents: 1199, currency: 'USD', billingPeriod: 'monthly' },
       { canonicalName: 'Family', priceCents: 1999, currency: 'USD', billingPeriod: 'monthly' },
-      { canonicalName: 'Professional', priceCents: 1999, currency: 'USD', billingPeriod: 'monthly' },
     ],
   },
+
   {
     slug: '1password',
     displayName: '1Password',
+    category: 'Productivity',
     logoUrl: 'https://logo.clearbit.com/1password.com',
     homepageUrl: 'https://1password.com',
-    cancelUrl: 'https://support.1password.com/manage-subscription/',
-    cardAbuseRisk: 'low',
-    merchantStringPatterns: ['1password', '1pass', 'onepassword', 'password manager'],
-    cancelPlaybookMd: `## Canceling 1Password\n\n1. Go to 1password.com and sign in\n2. Click your account → Settings\n3. Navigate to Billing → Subscription\n4. Click "Cancel Subscription"`,
+    cancelUrl: 'https://support.1password.com/cancel/',
+    cardAbuseRisk: 'medium',
+    merchantStringPatterns: ['1password', '1pass', '1p', 'one password'],
+    cancelPlaybookMd: `## Canceling 1Password
+
+1. Go to 1password.com and sign in
+2. Navigate to Account Settings → Subscription
+3. Click "Cancel My Subscription"
+4. Confirm cancellation`,
     plans: [
       { canonicalName: 'Individual', priceCents: 299, currency: 'USD', billingPeriod: 'monthly' },
       { canonicalName: 'Family', priceCents: 499, currency: 'USD', billingPeriod: 'monthly' },
     ],
   },
+
   {
     slug: 'slack',
     displayName: 'Slack',
+    category: 'Productivity',
     logoUrl: 'https://logo.clearbit.com/slack.com',
     homepageUrl: 'https://slack.com',
-    cancelUrl: 'https://slack.com/help/articles/201380050-Downgrade-or-delete-your-Slack-workspace',
+    cancelUrl: 'https://slack.com/help/articles/202475663-Manage-your-Slack-subscription',
     cardAbuseRisk: 'medium',
-    merchantStringPatterns: ['slack', 'slack.com', 'slack pro', 'slack business'],
-    cancelPlaybookMd: `## Canceling Slack\n\n1. Go to your Slack workspace settings\n2. Navigate to Billing → Upgrade/Downgrade\n3. Select a lower plan or "Downgrade to Free"\n4. Confirm your choice`,
+    merchantStringPatterns: ['slack', 'slack.com', 'slack pro', 'slack business+'],
+    cancelPlaybookMd: `## Canceling Slack
+
+1. Go to slack.com and sign in to workspace
+2. Navigate to Settings & administration → Billing
+3. Select "View plans" → Downgrade
+4. Confirm downgrade to Free plan`,
     plans: [
-      { canonicalName: 'Pro', priceCents: 899, currency: 'USD', billingPeriod: 'monthly' },
+      { canonicalName: 'Pro', priceCents: 999, currency: 'USD', billingPeriod: 'monthly' },
       { canonicalName: 'Business+', priceCents: 1599, currency: 'USD', billingPeriod: 'monthly' },
     ],
   },
+
   {
-    slug: 'github',
-    displayName: 'GitHub',
+    slug: 'github-copilot',
+    displayName: 'GitHub Copilot',
+    category: 'Productivity',
     logoUrl: 'https://logo.clearbit.com/github.com',
-    homepageUrl: 'https://github.com',
-    cancelUrl: 'https://docs.github.com/en/billing/managing-your-github-billing-settings/downgrading-your-github-subscription',
+    homepageUrl: 'https://github.com/features/copilot',
+    cancelUrl: 'https://docs.github.com/en/billing/managing-billing-for-github-copilot/managing-your-github-copilot-subscription',
     cardAbuseRisk: 'low',
-    merchantStringPatterns: ['github', 'github.com', 'github pro', 'github copilot'],
-    cancelPlaybookMd: `## Canceling GitHub\n\n1. Go to github.com and sign in\n2. Click your avatar → Settings\n3. Select Billing & plans → Plans and pricing\n4. Click "Downgrade" for the plan you want to cancel`,
+    merchantStringPatterns: ['github copilot', 'copilot', 'github.com copilot'],
+    cancelPlaybookMd: `## Canceling GitHub Copilot
+
+1. Go to github.com and sign in
+2. Navigate to Settings → Billing & plans
+3. Select Copilot → Manage
+4. Click "Cancel Copilot subscription"`,
     plans: [
-      { canonicalName: 'Pro', priceCents: 400, currency: 'USD', billingPeriod: 'monthly' },
-      { canonicalName: 'Copilot', priceCents: 1000, currency: 'USD', billingPeriod: 'monthly' },
+      { canonicalName: 'Individual Monthly', priceCents: 1000, currency: 'USD', billingPeriod: 'monthly' },
+      { canonicalName: 'Individual Annual', priceCents: 10000, currency: 'USD', billingPeriod: 'yearly' },
     ],
   },
+
   {
     slug: 'notion',
     displayName: 'Notion',
+    category: 'Productivity',
     logoUrl: 'https://logo.clearbit.com/notion.so',
     homepageUrl: 'https://notion.so',
-    cancelUrl: 'https://www.notion.so/help/article/downgrade-to-free',
+    cancelUrl: 'https://www.notion.so/Help-support',
     cardAbuseRisk: 'low',
-    merchantStringPatterns: ['notion', 'notion.so', 'notion plus', 'workspace'],
-    cancelPlaybookMd: `## Canceling Notion\n\n1. Go to notion.so and select your workspace\n2. Click "Settings & members"\n3. Navigate to Upgrade → Subscription\n4. Click "Downgrade to Free"`,
+    merchantStringPatterns: ['notion', 'notion.so', 'notion pro'],
+    cancelPlaybookMd: `## Canceling Notion
+
+1. Go to notion.so and sign in
+2. Navigate to Settings & members → Settings → Manage plan
+3. Click "Downgrade"
+4. Confirm downgrade to Free`,
     plans: [
-      { canonicalName: 'Plus', priceCents: 999, currency: 'USD', billingPeriod: 'monthly' },
-      { canonicalName: 'Business', priceCents: 1999, currency: 'USD', billingPeriod: 'monthly' },
+      { canonicalName: 'Plus', priceCents: 1000, currency: 'USD', billingPeriod: 'monthly' },
+      { canonicalName: 'Business', priceCents: 2000, currency: 'USD', billingPeriod: 'monthly' },
     ],
   },
+
   {
     slug: 'figma',
     displayName: 'Figma',
+    category: 'Productivity',
     logoUrl: 'https://logo.clearbit.com/figma.com',
     homepageUrl: 'https://figma.com',
-    cancelUrl: 'https://help.figma.com/hc/en-us/articles/1500003856482-Subscription-FAQs#cancel',
-    cardAbuseRisk: 'low',
-    merchantStringPatterns: ['figma', 'figma.com', 'design tool'],
-    cancelPlaybookMd: `## Canceling Figma\n\n1. Go to figma.com and sign in\n2. Click your profile → Billing → Plans\n3. Select your team or account\n4. Click "Downgrade" or "Cancel"`,
+    cancelUrl: 'https://help.figma.com/hc/en-us/articles/360040315373-Manage-your-Figma-subscription',
+    cardAbuseRisk: 'medium',
+    merchantStringPatterns: ['figma', 'figma.com', 'figma design'],
+    cancelPlaybookMd: `## Canceling Figma
+
+1. Go to figma.com and sign in
+2. Navigate to File → Billing
+3. Select "Cancel subscription"
+4. Confirm cancellation`,
     plans: [
       { canonicalName: 'Professional', priceCents: 1200, currency: 'USD', billingPeriod: 'monthly' },
-      { canonicalName: 'Organization', priceCents: 3000, currency: 'USD', billingPeriod: 'monthly' },
+      { canonicalName: 'Organization', priceCents: 2400, currency: 'USD', billingPeriod: 'monthly' },
     ],
   },
+
   {
-    slug: 'canva',
-    displayName: 'Canva Pro',
-    logoUrl: 'https://logo.clearbit.com/canva.com',
-    homepageUrl: 'https://canva.com',
-    cancelUrl: 'https://www.canva.com/help/manage-and-cancel-your-subscription/',
-    cardAbuseRisk: 'low',
-    merchantStringPatterns: ['canva', 'canva.com', 'canva pro'],
-    cancelPlaybookMd: `## Canceling Canva\n\n1. Go to canva.com and sign in\n2. Click your profile → Account settings\n3. Navigate to Subscription → Manage plan\n4. Click "Cancel Canva Pro"`,
-    plans: [
-      { canonicalName: 'Pro', priceCents: 1200, currency: 'USD', billingPeriod: 'yearly' },
-      { canonicalName: 'Teams', priceCents: 2995, currency: 'USD', billingPeriod: 'yearly' },
-    ],
-  },
-  {
-    slug: 'lastpass',
-    displayName: 'LastPass',
-    logoUrl: 'https://logo.clearbit.com/lastpass.com',
-    homepageUrl: 'https://lastpass.com',
-    cancelUrl: 'https://support.logmeininc.com/lastpass/help/cancel-your-lastpass-premium-subscription',
-    cardAbuseRisk: 'low',
-    merchantStringPatterns: ['lastpass', 'lastpass.com', 'password manager'],
-    cancelPlaybookMd: `## Canceling LastPass\n\n1. Go to lastpass.com and sign in\n2. Click your email → Account settings\n3. Select Subscriptions → Manage\n4. Click "Cancel" next to your subscription`,
-    plans: [
-      { canonicalName: 'Premium', priceCents: 299, currency: 'USD', billingPeriod: 'yearly' },
-      { canonicalName: 'Families', priceCents: 499, currency: 'USD', billingPeriod: 'yearly' },
-    ],
-  },
-  {
-    slug: 'zoom',
-    displayName: 'Zoom Pro',
-    logoUrl: 'https://logo.clearbit.com/zoom.us',
-    homepageUrl: 'https://zoom.us',
-    cancelUrl: 'https://support.zoom.us/hc/en-us/articles/203514819-Downgrading-your-paid-Zoom-account',
-    cardAbuseRisk: 'low',
-    merchantStringPatterns: ['zoom', 'zoom.us', 'zoom pro', 'video conferencing'],
-    cancelPlaybookMd: `## Canceling Zoom\n\n1. Go to zoom.us and sign in\n2. Click Settings → Billing\n3. Navigate to Subscriptions\n4. Click "Downgrade" for your plan`,
-    plans: [
-      { canonicalName: 'Pro', priceCents: 1599, currency: 'USD', billingPeriod: 'monthly' },
-      { canonicalName: 'Business', priceCents: 3199, currency: 'USD', billingPeriod: 'monthly' },
-    ],
-  },
-  {
-    slug: 'grammarly',
-    displayName: 'Grammarly',
-    logoUrl: 'https://logo.clearbit.com/grammarly.com',
-    homepageUrl: 'https://grammarly.com',
-    cancelUrl: 'https://support.grammarly.com/hc/en-us/articles/115000091612-Manage-your-subscription',
-    cardAbuseRisk: 'low',
-    merchantStringPatterns: ['grammarly', 'grammarly.com', 'writing assistant'],
-    cancelPlaybookMd: `## Canceling Grammarly\n\n1. Go to grammarly.com and sign in\n2. Click your profile → Subscription\n3. Click "Manage subscription"\n4. Select "Cancel subscription"`,
-    plans: [
-      { canonicalName: 'Premium', priceCents: 1199, currency: 'USD', billingPeriod: 'monthly' },
-      { canonicalName: 'Premium', priceCents: 11988, currency: 'USD', billingPeriod: 'yearly' },
-    ],
-  },
-  {
-    slug: 'aws-professional-services',
-    displayName: 'AWS Professional Services',
+    slug: 'aws',
+    displayName: 'Amazon Web Services',
+    category: 'Cloud Services',
     logoUrl: 'https://logo.clearbit.com/aws.amazon.com',
     homepageUrl: 'https://aws.amazon.com',
-    cancelUrl: 'https://aws.amazon.com/professional-services/',
-    cardAbuseRisk: 'medium',
-    merchantStringPatterns: ['aws professional', 'aws services', 'professional services'],
-    cancelPlaybookMd: `## Canceling AWS Professional Services\n\n1. Contact your AWS account manager\n2. Request cancellation of the engagement\n3. Review billing impact and timeline`,
-    plans: [
-      { canonicalName: 'Custom Engagement', priceCents: 100000, currency: 'USD', billingPeriod: 'monthly' },
+    cancelUrl: 'https://docs.aws.amazon.com/awsaccountbilling/latest/aboutv2/close-account.html',
+    cardAbuseRisk: 'high',
+    merchantStringPatterns: [
+      'amazon web services',
+      'aws',
+      'aws.amazon.com',
+      'amazon compute',
     ],
-  },
-  {
-    slug: 'hulu',
-    displayName: 'Hulu',
-    logoUrl: 'https://logo.clearbit.com/hulu.com',
-    homepageUrl: 'https://hulu.com',
-    cancelUrl: 'https://help.hulu.com/en-US/article/4037-how-do-i-cancel-my-subscription',
-    cardAbuseRisk: 'low',
-    merchantStringPatterns: ['hulu', 'hulu.com', 'streaming service'],
-    cancelPlaybookMd: `## Canceling Hulu\n\n1. Go to hulu.com and sign in\n2. Click your profile → Account\n3. Select Subscription → Manage Subscription\n4. Click "Cancel Subscription"`,
+    cancelPlaybookMd: `## Closing AWS Account
+
+1. Go to console.aws.amazon.com and sign in
+2. Navigate to Account → Billing Dashboard
+3. Select "Close Account"
+4. Review and confirm closure (warning: deletes all resources)`,
     plans: [
-      { canonicalName: 'Ad-Supported', priceCents: 799, currency: 'USD', billingPeriod: 'monthly' },
-      { canonicalName: 'Ad-Free', priceCents: 1599, currency: 'USD', billingPeriod: 'monthly' },
-    ],
-  },
-  {
-    slug: 'disney-plus',
-    displayName: 'Disney+',
-    logoUrl: 'https://logo.clearbit.com/disneyplus.com',
-    homepageUrl: 'https://disneyplus.com',
-    cancelUrl: 'https://help.disneyplus.com/article/cancel-subscription',
-    cardAbuseRisk: 'low',
-    merchantStringPatterns: ['disney', 'disney plus', 'disney+', 'disneyplus'],
-    cancelPlaybookMd: `## Canceling Disney+\n\n1. Go to disneyplus.com and sign in\n2. Click your profile → Account\n3. Navigate to Subscription → Manage Subscription\n4. Click "Cancel Subscription"`,
-    plans: [
-      { canonicalName: 'Basic', priceCents: 799, currency: 'USD', billingPeriod: 'monthly' },
-      { canonicalName: 'Premium', priceCents: 1299, currency: 'USD', billingPeriod: 'monthly' },
-    ],
-  },
-  {
-    slug: 'paramount-plus',
-    displayName: 'Paramount+',
-    logoUrl: 'https://logo.clearbit.com/paramountplus.com',
-    homepageUrl: 'https://paramountplus.com',
-    cancelUrl: 'https://help.paramountplus.com/s/article/cancel-subscription',
-    cardAbuseRisk: 'low',
-    merchantStringPatterns: ['paramount', 'paramount plus', 'paramount+'],
-    cancelPlaybookMd: `## Canceling Paramount+\n\n1. Go to paramountplus.com and sign in\n2. Click your profile → Account\n3. Select Subscriptions → Manage\n4. Click "Cancel Subscription"`,
-    plans: [
-      { canonicalName: 'Essential', priceCents: 599, currency: 'USD', billingPeriod: 'monthly' },
-      { canonicalName: 'Premium', priceCents: 1199, currency: 'USD', billingPeriod: 'monthly' },
-    ],
-  },
-  {
-    slug: 'max',
-    displayName: 'Max (HBO)',
-    logoUrl: 'https://logo.clearbit.com/max.com',
-    homepageUrl: 'https://max.com',
-    cancelUrl: 'https://help.max.com/en/article/HE1005-Cancel-your-subscription',
-    cardAbuseRisk: 'low',
-    merchantStringPatterns: ['max', 'hbo max', 'hbo', 'warner bros'],
-    cancelPlaybookMd: `## Canceling Max\n\n1. Go to max.com and sign in\n2. Click your profile → Account\n3. Navigate to Subscriptions → Manage\n4. Click "Cancel Subscription"`,
-    plans: [
-      { canonicalName: 'Ad-Supported', priceCents: 799, currency: 'USD', billingPeriod: 'monthly' },
-      { canonicalName: 'Ad-Free', priceCents: 1699, currency: 'USD', billingPeriod: 'monthly' },
-    ],
-  },
-  {
-    slug: 'peacock',
-    displayName: 'Peacock Premium',
-    logoUrl: 'https://logo.clearbit.com/peacocktv.com',
-    homepageUrl: 'https://peacocktv.com',
-    cancelUrl: 'https://help.peacocktv.com/article/cancel-subscription',
-    cardAbuseRisk: 'low',
-    merchantStringPatterns: ['peacock', 'peacocktv', 'nbc streaming'],
-    cancelPlaybookMd: `## Canceling Peacock\n\n1. Go to peacocktv.com and sign in\n2. Click your profile → Account\n3. Select Premium Subscription → Manage\n4. Click "Cancel Subscription"`,
-    plans: [
-      { canonicalName: 'Premium', priceCents: 599, currency: 'USD', billingPeriod: 'monthly' },
-      { canonicalName: 'Premium Plus', priceCents: 1199, currency: 'USD', billingPeriod: 'monthly' },
-    ],
-  },
-  {
-    slug: 'apple-tv',
-    displayName: 'Apple TV+',
-    logoUrl: 'https://logo.clearbit.com/tv.apple.com',
-    homepageUrl: 'https://tv.apple.com',
-    cancelUrl: 'https://support.apple.com/en-us/HT207028',
-    cardAbuseRisk: 'low',
-    merchantStringPatterns: ['apple tv', 'apple tv+', 'tv.apple'],
-    cancelPlaybookMd: `## Canceling Apple TV+\n\n1. Open Settings or Apple TV app\n2. Tap your profile → Subscriptions\n3. Select "Apple TV+"\n4. Tap "Cancel Subscription"`,
-    plans: [
-      { canonicalName: 'Premium', priceCents: 999, currency: 'USD', billingPeriod: 'monthly' },
-      { canonicalName: 'Premium', priceCents: 9990, currency: 'USD', billingPeriod: 'yearly' },
-    ],
-  },
-  {
-    slug: 'skillshare',
-    displayName: 'Skillshare',
-    logoUrl: 'https://logo.clearbit.com/skillshare.com',
-    homepageUrl: 'https://skillshare.com',
-    cancelUrl: 'https://help.skillshare.com/hc/en-us/articles/211996833-How-do-I-cancel-my-account-',
-    cardAbuseRisk: 'low',
-    merchantStringPatterns: ['skillshare', 'skillshare.com', 'online learning'],
-    cancelPlaybookMd: `## Canceling Skillshare\n\n1. Go to skillshare.com and sign in\n2. Click your avatar → Premium membership\n3. Click "Cancel your membership"\n4. Confirm cancellation`,
-    plans: [
-      { canonicalName: 'Premium', priceCents: 2490, currency: 'USD', billingPeriod: 'monthly' },
-      { canonicalName: 'Premium', priceCents: 2490, currency: 'USD', billingPeriod: 'yearly' },
-    ],
-  },
-  {
-    slug: 'masterclass',
-    displayName: 'MasterClass',
-    logoUrl: 'https://logo.clearbit.com/masterclass.com',
-    homepageUrl: 'https://masterclass.com',
-    cancelUrl: 'https://www.masterclass.com/help/accounts/managing-masterclass-membership',
-    cardAbuseRisk: 'low',
-    merchantStringPatterns: ['masterclass', 'masterclass.com', 'online classes'],
-    cancelPlaybookMd: `## Canceling MasterClass\n\n1. Go to masterclass.com and sign in\n2. Click your profile → Account settings\n3. Select Membership → Cancel membership\n4. Confirm your request`,
-    plans: [
-      { canonicalName: 'Annual', priceCents: 18000, currency: 'USD', billingPeriod: 'yearly' },
-      { canonicalName: 'Monthly', priceCents: 1799, currency: 'USD', billingPeriod: 'monthly' },
-    ],
-  },
-  {
-    slug: 'tabnine',
-    displayName: 'Tabnine Pro',
-    logoUrl: 'https://logo.clearbit.com/tabnine.com',
-    homepageUrl: 'https://tabnine.com',
-    cancelUrl: 'https://www.tabnine.com/account/subscription',
-    cardAbuseRisk: 'low',
-    merchantStringPatterns: ['tabnine', 'tabnine.com', 'code completion'],
-    cancelPlaybookMd: `## Canceling Tabnine\n\n1. Go to tabnine.com and sign in\n2. Navigate to Account → Subscription\n3. Click "Cancel Subscription"\n4. Confirm cancellation`,
-    plans: [
-      { canonicalName: 'Pro', priceCents: 1499, currency: 'USD', billingPeriod: 'monthly' },
-    ],
-  },
-  {
-    slug: 'jetbrains',
-    displayName: 'JetBrains All Products',
-    logoUrl: 'https://logo.clearbit.com/jetbrains.com',
-    homepageUrl: 'https://jetbrains.com',
-    cancelUrl: 'https://sales.jetbrains.com/hc/en-gb/articles/207240845-How-can-I-cancel-my-subscription-',
-    cardAbuseRisk: 'low',
-    merchantStringPatterns: ['jetbrains', 'jetbrains.com', 'intellij', 'pycharm'],
-    cancelPlaybookMd: `## Canceling JetBrains\n\n1. Go to jetbrains.com and sign in\n2. Navigate to Account → Subscriptions\n3. Click "Cancel Subscription" on your plan\n4. Confirm cancellation`,
-    plans: [
-      { canonicalName: 'All Products Monthly', priceCents: 2499, currency: 'USD', billingPeriod: 'monthly' },
-      { canonicalName: 'All Products Annual', priceCents: 24990, currency: 'USD', billingPeriod: 'yearly' },
-    ],
-  },
-  {
-    slug: 'linear',
-    displayName: 'Linear Pro',
-    logoUrl: 'https://logo.clearbit.com/linear.app',
-    homepageUrl: 'https://linear.app',
-    cancelUrl: 'https://linear.app/help/billing',
-    cardAbuseRisk: 'low',
-    merchantStringPatterns: ['linear', 'linear.app', 'issue tracking'],
-    cancelPlaybookMd: `## Canceling Linear\n\n1. Go to linear.app and sign in\n2. Navigate to Settings → Billing\n3. Click "Cancel subscription"\n4. Confirm your cancellation`,
-    plans: [
-      { canonicalName: 'Pro', priceCents: 7900, currency: 'USD', billingPeriod: 'monthly' },
-    ],
-  },
-  {
-    slug: 'vercel',
-    displayName: 'Vercel Pro',
-    logoUrl: 'https://logo.clearbit.com/vercel.com',
-    homepageUrl: 'https://vercel.com',
-    cancelUrl: 'https://vercel.com/docs/account-setup/billing',
-    cardAbuseRisk: 'low',
-    merchantStringPatterns: ['vercel', 'vercel.com', 'deployment platform'],
-    cancelPlaybookMd: `## Canceling Vercel\n\n1. Go to vercel.com and sign in\n2. Click your account → Settings → Billing\n3. Click "Manage subscription"\n4. Select "Downgrade to Free"`,
-    plans: [
-      { canonicalName: 'Pro', priceCents: 2000, currency: 'USD', billingPeriod: 'monthly' },
-    ],
-  },
-  {
-    slug: 'npm-pro',
-    displayName: 'npm Pro',
-    logoUrl: 'https://logo.clearbit.com/npmjs.com',
-    homepageUrl: 'https://npmjs.com',
-    cancelUrl: 'https://docs.npmjs.com/about-npm-pro',
-    cardAbuseRisk: 'low',
-    merchantStringPatterns: ['npm', 'npmjs', 'npm pro'],
-    cancelPlaybookMd: `## Canceling npm Pro\n\n1. Go to npmjs.com and sign in\n2. Click your avatar → Billing & plans\n3. Navigate to your subscription\n4. Click "Downgrade to Free"`,
-    plans: [
-      { canonicalName: 'Pro', priceCents: 700, currency: 'USD', billingPeriod: 'monthly' },
-    ],
-  },
-  {
-    slug: 'copilot-pro',
-    displayName: 'GitHub Copilot Pro',
-    logoUrl: 'https://logo.clearbit.com/github.com',
-    homepageUrl: 'https://github.com/features/copilot/pro',
-    cancelUrl: 'https://docs.github.com/en/billing/managing-billing-for-github-copilot/managing-your-github-copilot-subscription-for-your-personal-account',
-    cardAbuseRisk: 'low',
-    merchantStringPatterns: ['copilot pro', 'github copilot', 'ai pair programmer'],
-    cancelPlaybookMd: `## Canceling Copilot Pro\n\n1. Go to github.com and sign in\n2. Click your avatar → Settings → Copilot\n3. Click "Manage Copilot subscription"\n4. Select "Cancel Copilot Pro"`,
-    plans: [
-      { canonicalName: 'Copilot Pro', priceCents: 2000, currency: 'USD', billingPeriod: 'monthly' },
-    ],
-  },
-  {
-    slug: 'stripe-atlas',
-    displayName: 'Stripe Atlas',
-    logoUrl: 'https://logo.clearbit.com/stripe.com',
-    homepageUrl: 'https://stripe.com/atlas',
-    cancelUrl: 'https://stripe.com/atlas',
-    cardAbuseRisk: 'medium',
-    merchantStringPatterns: ['stripe atlas', 'stripe', 'business formation'],
-    cancelPlaybookMd: `## Canceling Stripe Atlas\n\n1. Contact Stripe support via your dashboard\n2. Request cancellation of Atlas services\n3. Follow dissolution procedures for your entity`,
-    plans: [
-      { canonicalName: 'One-time Setup', priceCents: 50000, currency: 'USD', billingPeriod: 'monthly' },
-    ],
-  },
-  {
-    slug: 'aws-startup',
-    displayName: 'AWS Startup Credits',
-    logoUrl: 'https://logo.clearbit.com/aws.amazon.com',
-    homepageUrl: 'https://aws.amazon.com/startups/',
-    cancelUrl: 'https://aws.amazon.com/startups/',
-    cardAbuseRisk: 'low',
-    merchantStringPatterns: ['aws startup', 'startup credits'],
-    cancelPlaybookMd: `## Canceling AWS Startup Credits\n\n1. Contact your AWS account manager\n2. Credits are non-renewable and expire after the program term\n3. Plan accordingly for post-credit usage`,
-    plans: [
-      { canonicalName: 'Credit Program', priceCents: 0, currency: 'USD', billingPeriod: 'yearly' },
-    ],
-  },
-  {
-    slug: 'supabase-pro',
-    displayName: 'Supabase Pro',
-    logoUrl: 'https://logo.clearbit.com/supabase.com',
-    homepageUrl: 'https://supabase.com',
-    cancelUrl: 'https://supabase.com/docs/guides/platform/org-based-billing',
-    cardAbuseRisk: 'low',
-    merchantStringPatterns: ['supabase', 'supabase.com', 'postgres database'],
-    cancelPlaybookMd: `## Canceling Supabase Pro\n\n1. Go to supabase.com and sign in\n2. Navigate to Organization Settings → Billing\n3. Click "Downgrade to Free"\n4. Confirm downgrade`,
-    plans: [
-      { canonicalName: 'Pro', priceCents: 2500, currency: 'USD', billingPeriod: 'monthly' },
-    ],
-  },
-  {
-    slug: 'wix',
-    displayName: 'Wix Premium',
-    logoUrl: 'https://logo.clearbit.com/wix.com',
-    homepageUrl: 'https://wix.com',
-    cancelUrl: 'https://www.wix.com/en/support/article/downgrading-canceling-your-premium-plan',
-    cardAbuseRisk: 'low',
-    merchantStringPatterns: ['wix', 'wix.com', 'website builder'],
-    cancelPlaybookMd: `## Canceling Wix\n\n1. Go to wix.com and sign in\n2. Click your account → Settings\n3. Navigate to Billing & Plans → Manage Plan\n4. Click "Cancel Plan"`,
-    plans: [
-      { canonicalName: 'Combo', priceCents: 1720, currency: 'USD', billingPeriod: 'monthly' },
-      { canonicalName: 'Unlimited', priceCents: 2720, currency: 'USD', billingPeriod: 'monthly' },
-    ],
-  },
-  {
-    slug: 'squarespace',
-    displayName: 'Squarespace',
-    logoUrl: 'https://logo.clearbit.com/squarespace.com',
-    homepageUrl: 'https://squarespace.com',
-    cancelUrl: 'https://support.squarespace.com/hc/en-us/articles/204947308-Canceling-your-Squarespace-subscription',
-    cardAbuseRisk: 'low',
-    merchantStringPatterns: ['squarespace', 'squarespace.com', 'website platform'],
-    cancelPlaybookMd: `## Canceling Squarespace\n\n1. Go to squarespace.com and sign in\n2. Click your account → Account Settings\n3. Navigate to Subscriptions → Manage\n4. Click "Cancel subscription"`,
-    plans: [
-      { canonicalName: 'Personal', priceCents: 1600, currency: 'USD', billingPeriod: 'monthly' },
-      { canonicalName: 'Business', priceCents: 3300, currency: 'USD', billingPeriod: 'monthly' },
-    ],
-  },
-  {
-    slug: 'shutterstock',
-    displayName: 'Shutterstock',
-    logoUrl: 'https://logo.clearbit.com/shutterstock.com',
-    homepageUrl: 'https://shutterstock.com',
-    cancelUrl: 'https://submit.shutterstock.com/account-help/manage-subscription',
-    cardAbuseRisk: 'low',
-    merchantStringPatterns: ['shutterstock', 'shutterstock.com', 'stock images'],
-    cancelPlaybookMd: `## Canceling Shutterstock\n\n1. Go to shutterstock.com and sign in\n2. Click your account → Subscriptions\n3. Select your subscription → Manage\n4. Click "Cancel subscription"`,
-    plans: [
-      { canonicalName: 'Monthly', priceCents: 4999, currency: 'USD', billingPeriod: 'monthly' },
-      { canonicalName: 'Annual', priceCents: 39900, currency: 'USD', billingPeriod: 'yearly' },
+      { canonicalName: 'Pay-as-you-go', priceCents: 0, currency: 'USD', billingPeriod: 'monthly' },
     ],
   },
 ];

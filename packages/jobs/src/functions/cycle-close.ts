@@ -58,11 +58,13 @@ export const cycleCloseWorker = inngest.createFunction(
         dueDate: new Date(event.data.dueDate),
       }),
     );
+    // Emit bill.issued for payment collection to pick up
     await step.sendEvent('emit-bill-issued', {
       name: 'bill.issued',
       data: { billId: bill.id, userId: bill.userId, totalCents: bill.totalCents },
     });
-    return { billId: bill.id };
+
+    return { billId: bill.id, totalCents: bill.totalCents };
   },
 );
 

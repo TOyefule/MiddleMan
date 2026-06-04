@@ -7,10 +7,13 @@ import { plaidRecurringSync } from './functions/plaid-recurring-sync';
 import { nightlyBackupHealthcheck } from './functions/nightly-backup';
 import { cardAuthHandler, cardDeclineHandler } from './functions/card-auth';
 import { firstChargeValidator } from './functions/first-charge';
+import { paymentCollectionJob, paymentRetryJob } from './functions/payment-collection';
 
 export const functions = [
   cycleCloseScheduler,
   cycleCloseWorker,
+  paymentCollectionJob,
+  paymentRetryJob,
   dunningStateMachine,
   plaidRecurringSync,
   nightlyBackupHealthcheck,

@@ -2,6 +2,7 @@ import { NextResponse, type NextRequest } from 'next/server';
 import Stripe from 'stripe';
 import { getDb, schema, eq } from '@middleman/db';
 import { inngest } from '@middleman/jobs';
+import * as paymentCollection from '@middleman/api/services/payment-collection';
 
 export async function POST(req: NextRequest) {
   const body = await req.text();
@@ -33,6 +34,57 @@ export async function POST(req: NextRequest) {
   });
 
   switch (event.type) {
+    case 'payment_intent.succeeded': {
+      const pi = event.data.object as Stripe.PaymentIntent;
+      const billId = pi.metadata?.billId;
+      if (billId) {
+        const amountCents = pi.amount;
+        try {
+          await paymentCollection.handlePaymentSuccess({
+            billId,
+            paymentIntentId: pi.id,
+            amountCents,
+          });
+          // Emit event for payment-collection job's waitForEvent to pick up
+          await inngest.send({
+            name: 'payment_intent.succeeded',
+            data: { billId, paymentIntentId: pi.id, amountCents },
+          });
+          // Also emit for notifications to pick up
+          await inngest.send({
+            name: 'bill.payment.succeeded',
+            data: { billId, amountCents },
+          });
+        } catch (err) {
+          console.error(`Error handling payment success for bill ${billId}:`, err);
+        }
+      }
+      break;
+    }
+    case 'payment_intent.payment_failed': {
+      const pi = event.data.object as Stripe.PaymentIntent;
+      const billId = pi.metadata?.billId;
+      if (billId) {
+        const failureCode = pi.last_payment_error?.code ?? 'unknown';
+        const failureMessage = pi.last_payment_error?.message ?? 'Payment failed';
+        try {
+          await paymentCollection.handlePaymentFailure({
+            billId,
+            paymentIntentId: pi.id,
+            failureCode,
+            failureMessage,
+          });
+          // Emit event for payment-collection job's waitForEvent to pick up
+          await inngest.send({
+            name: 'payment_intent.payment_failed',
+            data: { billId, paymentIntentId: pi.id, failureCode, failureMessage },
+          });
+        } catch (err) {
+          console.error(`Error handling payment failure for bill ${billId}:`, err);
+        }
+      }
+      break;
+    }
     case 'invoice.payment_succeeded': {
       const invoice = event.data.object as Stripe.Invoice;
       const billId = invoice.metadata?.middleman_bill_id;

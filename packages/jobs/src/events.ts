@@ -30,6 +30,18 @@ export type Events = {
   'bill.payment.failed': {
     data: { billId: string; attemptNo: number; failureCode: string };
   };
+  'bill.payment.succeeded': {
+    data: { billId: string; amountCents: number };
+  };
+  'bill.retry.requested': {
+    data: { billId: string; userId: string; paymentMethodId?: string };
+  };
+  'payment_intent.succeeded': {
+    data: { billId: string; paymentIntentId: string; amountCents: number };
+  };
+  'payment_intent.payment_failed': {
+    data: { billId: string; paymentIntentId: string; failureCode: string; failureMessage: string };
+  };
   'plaid.recurring.updated': { data: { itemId: string; userId: string } };
   'kyc.session.completed': { data: { stripeSessionId: string; userId: string } };
   'kyc.verified': {

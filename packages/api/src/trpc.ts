@@ -1,0 +1,59 @@
+import { initTRPC, TRPCError } from '@trpc/server';
+import superjson from 'superjson';
+import { ZodError } from 'zod';
+import type { Context } from './context';
+
+const t = initTRPC.context<Context>().create({
+  transformer: superjson,
+  errorFormatter({ shape, error }) {
+    return {
+      ...shape,
+      data: {
+        ...shape.data,
+        zodError: error.cause instanceof ZodError ? error.cause.flatten() : null,
+      },
+    };
+  },
+});
+
+export const router = t.router;
+export const publicProcedure = t.procedure;
+export const createCaller = t.createCallerFactory;
+
+/**
+ * Procedure requiring an authenticated Clerk user. Hydrates ctx.user (DB row).
+ */
+export const protectedProcedure = t.procedure.use(async ({ ctx, next }) => {
+  if (!ctx.auth?.userId) {
+    throw new TRPCError({ code: 'UNAUTHORIZED' });
+  }
+  if (!ctx.user) {
+    throw new TRPCError({ code: 'UNAUTHORIZED', message: 'User record missing' });
+  }
+  return next({
+    ctx: {
+      ...ctx,
+      auth: ctx.auth,
+      user: ctx.user,
+    },
+  });
+});
+
+/**
+ * Procedure requiring an active admin. ctx.admin is hydrated.
+ */
+export const adminProcedure = t.procedure.use(async ({ ctx, next }) => {
+  if (!ctx.auth?.userId) {
+    throw new TRPCError({ code: 'UNAUTHORIZED' });
+  }
+  if (!ctx.admin || !ctx.admin.isActive) {
+    throw new TRPCError({ code: 'FORBIDDEN', message: 'Admin access required' });
+  }
+  return next({
+    ctx: {
+      ...ctx,
+      auth: ctx.auth,
+      admin: ctx.admin,
+    },
+  });
+});

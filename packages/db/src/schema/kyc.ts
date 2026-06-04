@@ -41,6 +41,7 @@ export const kycProfiles = pgTable(
     postalCodeCiphertext: encryptedText('postal_code_ciphertext'),
     countryCode: text('country_code').notNull().default('US'),
     stripeIdentitySessionId: text('stripe_identity_session_id'),
+    stripeCardholderId: text('stripe_cardholder_id'),
     failureReason: text('failure_reason'),
     verifiedAt: timestamp('verified_at', { withTimezone: true }),
     createdAt: timestamp('created_at', { withTimezone: true }).notNull().defaultNow(),

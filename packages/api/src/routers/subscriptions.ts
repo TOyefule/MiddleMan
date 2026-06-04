@@ -1,6 +1,7 @@
 import { z } from 'zod';
 import { router, protectedProcedure } from '../trpc';
 import { schema, eq, and, desc } from '@middleman/db';
+import { inngest } from '@middleman/jobs';
 import * as subscriptionsService from '../services/subscriptions';
 import * as issuingService from '../services/issuing';
 
@@ -65,5 +66,50 @@ export const subscriptionsRouter = router({
         )
         .returning();
       return updated;
+    }),
+
+  issueCard: protectedProcedure
+    .input(z.object({ subscriptionId: z.string().uuid() }))
+    .mutation(async ({ ctx, input }) => {
+      // Verify subscription exists and belongs to user
+      const [sub] = await ctx.db
+        .select()
+        .from(schema.subscriptions)
+        .where(
+          and(
+            eq(schema.subscriptions.id, input.subscriptionId),
+            eq(schema.subscriptions.userId, ctx.user.id),
+          ),
+        )
+        .limit(1);
+
+      if (!sub) throw new Error('Subscription not found');
+      if (sub.providerId === null) throw new Error('Subscription must be linked to a provider');
+      if (sub.expectedAmountCents === null) {
+        throw new Error('Subscription amount must be set');
+      }
+
+      // Calculate cap: subscription amount + 10% buffer
+      const perCycleCapCents = Math.round(sub.expectedAmountCents * 1.1);
+
+      // Create virtual card
+      const card = await issuingService.createSubscriptionCard({
+        userId: ctx.user.id,
+        subscriptionId: input.subscriptionId,
+        perCycleCapCents,
+      });
+
+      // Emit card.issued event for downstream processing
+      // (will trigger first-charge validation in Phase 4)
+      await inngest.send({
+        name: 'card.issued',
+        data: {
+          userId: ctx.user.id,
+          subscriptionId: input.subscriptionId,
+          virtualCardId: card.id,
+        },
+      });
+
+      return card;
     }),
 });

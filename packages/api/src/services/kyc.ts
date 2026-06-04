@@ -1,6 +1,9 @@
 import { getDb, schema, eq } from '@middleman/db';
 import { getStripe } from '../lib/stripe';
 
+/**
+ * Get KYC profile status for a user
+ */
 export async function getStatus(input: { userId: string }) {
   const db = getDb();
   const [profile] = await db
@@ -11,6 +14,10 @@ export async function getStatus(input: { userId: string }) {
   return profile ?? null;
 }
 
+/**
+ * Start a Stripe Identity verification session
+ * Returns session URL and client secret for embedding in frontend
+ */
 export async function startStripeIdentitySession(input: { userId: string }) {
   const db = getDb();
   const stripe = getStripe();
@@ -41,4 +48,22 @@ export async function startStripeIdentitySession(input: { userId: string }) {
     .where(eq(schema.kycProfiles.id, profile.id));
 
   return { url: session.url, clientSecret: session.client_secret };
+}
+
+/**
+ * Check if user has verified KYC status
+ * Used before card issuance to gate access
+ */
+export async function isVerified(userId: string): Promise<boolean> {
+  const profile = await getStatus({ userId });
+  return profile?.status === 'verified';
+}
+
+/**
+ * Get verification level (light vs full)
+ * Used for determining subscription limits
+ */
+export async function getVerificationLevel(userId: string): Promise<'none' | 'light' | 'full'> {
+  const profile = await getStatus({ userId });
+  return profile?.level ?? 'none';
 }

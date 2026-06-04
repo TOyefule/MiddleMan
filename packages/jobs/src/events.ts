@@ -32,4 +32,19 @@ export type Events = {
   };
   'plaid.recurring.updated': { data: { itemId: string; userId: string } };
   'kyc.session.completed': { data: { stripeSessionId: string; userId: string } };
+  'kyc.verified': {
+    data: { userId: string; kycProfileId: string; verificationLevel: 'light' | 'full' };
+  };
+  'kyc.failed': {
+    data: { userId: string; kycProfileId: string; failureReason: string };
+  };
+  'card.issued': {
+    data: { userId: string; subscriptionId: string; virtualCardId: string };
+  };
+  'card.declined': {
+    data: { userId: string; virtualCardId: string; reason: string };
+  };
+  'subscription.activated': {
+    data: { userId: string; subscriptionId: string; virtualCardId: string };
+  };
 };

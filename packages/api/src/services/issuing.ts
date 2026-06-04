@@ -2,6 +2,7 @@ import { getDb, schema, eq, and } from '@middleman/db';
 import { getStripe } from '../lib/stripe';
 import { getRedis } from '../lib/redis';
 import { KycRequiredError, NotFoundError } from '../lib/errors';
+import * as kycService from './kyc';
 
 const CARD_CACHE_TTL_SECONDS = 300;
 
@@ -36,11 +37,15 @@ export async function createSubscriptionCard(input: CreateCardInput) {
     throw new KycRequiredError();
   }
 
-  // Stripe Issuing cardholder is created at KYC completion; cardholder_id stored elsewhere.
-  // For brevity assume it's stripe_customer_id-like field (TODO: wire after Stripe Issuing approval).
-  const cardholderId = (kyc as unknown as { stripeCardholderId?: string }).stripeCardholderId;
+  // Get or create Stripe cardholder for this user
+  let cardholderId = kyc.stripeCardholderId;
   if (!cardholderId) {
-    throw new Error('Stripe cardholder not yet provisioned for this user');
+    cardholderId = await getOrCreateCardholder(input.userId, user);
+    // Update KYC profile with cardholder ID
+    await db
+      .update(schema.kycProfiles)
+      .set({ stripeCardholderId: cardholderId })
+      .where(eq(schema.kycProfiles.id, kyc.id));
   }
 
   const card = await stripe.issuing.cards.create({
@@ -156,4 +161,26 @@ export async function primeCardCache(card: CachedCard): Promise<void> {
 export async function invalidateCardCache(stripeCardId: string): Promise<void> {
   const redis = getRedis();
   await redis.del(`vc:${stripeCardId}`);
+}
+
+/**
+ * Create a Stripe Issuing cardholder for a user
+ * Called once per user after KYC verification
+ */
+async function getOrCreateCardholder(
+  userId: string,
+  user: { id: string; email: string | null },
+): Promise<string> {
+  const stripe = getStripe();
+
+  // Create cardholder with basic info
+  // Note: Full PII (SSN, DOB, address) would be encrypted in KMS
+  const cardholder = await stripe.issuing.cardholders.create({
+    type: 'individual',
+    name: user.email?.split('@')[0] || 'MiddleMan User',
+    email: user.email || undefined,
+    metadata: { middleman_user_id: userId },
+  });
+
+  return cardholder.id;
 }

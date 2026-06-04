@@ -63,10 +63,22 @@ export async function POST(req: NextRequest) {
       const session = event.data.object as Stripe.Identity.VerificationSession;
       const userId = session.metadata?.user_id;
       if (userId) {
-        await db
+        const [profile] = await db
           .update(schema.kycProfiles)
           .set({ status: 'verified', level: 'full', verifiedAt: new Date() })
-          .where(eq(schema.kycProfiles.userId, userId));
+          .where(eq(schema.kycProfiles.userId, userId))
+          .returning();
+
+        if (profile) {
+          await inngest.send({
+            name: 'kyc.verified',
+            data: {
+              userId,
+              kycProfileId: profile.id,
+              verificationLevel: 'full',
+            },
+          });
+        }
       }
       break;
     }
@@ -74,10 +86,23 @@ export async function POST(req: NextRequest) {
       const session = event.data.object as Stripe.Identity.VerificationSession;
       const userId = session.metadata?.user_id;
       if (userId) {
-        await db
+        const failureReason = session.last_error?.reason ?? 'unknown_error';
+        const [profile] = await db
           .update(schema.kycProfiles)
-          .set({ status: 'failed', failureReason: session.last_error?.reason ?? 'unknown' })
-          .where(eq(schema.kycProfiles.userId, userId));
+          .set({ status: 'failed', failureReason })
+          .where(eq(schema.kycProfiles.userId, userId))
+          .returning();
+
+        if (profile) {
+          await inngest.send({
+            name: 'kyc.failed',
+            data: {
+              userId,
+              kycProfileId: profile.id,
+              failureReason,
+            },
+          });
+        }
       }
       break;
     }

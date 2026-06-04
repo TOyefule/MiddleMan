@@ -48,6 +48,18 @@ export type Events = {
   'bill.escalated_to_ops': {
     data: { billId: string; daysOverdue: number; attemptCount: number };
   };
+  'bill.adjusted': {
+    data: { billId: string; amountCents: number; reason: string };
+  };
+  'bill.fee_waived': {
+    data: { billId: string; waiverAmount: number; reason: string };
+  };
+  'bill.marked_past_due': {
+    data: { billId: string; reason: string };
+  };
+  'bill.uncollectible_cleared': {
+    data: { billId: string; reason: string };
+  };
   'plaid.recurring.updated': { data: { itemId: string; userId: string } };
   'kyc.session.completed': { data: { stripeSessionId: string; userId: string } };
   'kyc.verified': {

@@ -2,6 +2,7 @@ import { z } from 'zod';
 import { router, protectedProcedure } from '../trpc';
 import { schema, eq, and, desc } from '@middleman/db';
 import { inngest } from '@middleman/jobs';
+import * as billPreview from '../services/bill-preview';
 
 export const billsRouter = router({
   list: protectedProcedure.query(async ({ ctx }) => {
@@ -29,12 +30,8 @@ export const billsRouter = router({
     }),
 
   preview: protectedProcedure.query(async ({ ctx }) => {
-    // Live preview of the current cycle's bill (not yet finalized).
-    // Implementation will sum unbilled charges + compute SaaS tier.
-    return {
-      userId: ctx.user.id,
-      message: 'Preview endpoint — wire to billing.previewCurrentCycle in M4',
-    };
+    // Live preview of the current cycle's bill (open or pending_collection).
+    return billPreview.getCurrentCycleBill(ctx.user.id);
   }),
 
   retry: protectedProcedure

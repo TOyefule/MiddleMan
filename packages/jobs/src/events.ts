@@ -42,6 +42,12 @@ export type Events = {
   'payment_intent.payment_failed': {
     data: { billId: string; paymentIntentId: string; failureCode: string; failureMessage: string };
   };
+  'bill.late_fee_assessed': {
+    data: { billId: string; lateFeeCents: number };
+  };
+  'bill.escalated_to_ops': {
+    data: { billId: string; daysOverdue: number; attemptCount: number };
+  };
   'plaid.recurring.updated': { data: { itemId: string; userId: string } };
   'kyc.session.completed': { data: { stripeSessionId: string; userId: string } };
   'kyc.verified': {

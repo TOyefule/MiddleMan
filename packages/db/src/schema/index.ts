@@ -14,3 +14,4 @@ export * from './admin';
 export * from './webhooks';
 export * from './plaid-items';
 export * from './enums';
+export * from './waitlist';

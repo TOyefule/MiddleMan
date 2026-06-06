@@ -19,3 +19,4 @@ export type { Notification, NotificationPreference } from './schema/notification
 export type { CancellationRequest } from './schema/cancellations';
 export type { Admin, AuditEntry } from './schema/admin';
 export type { WebhookEvent, NewWebhookEvent } from './schema/webhooks';
+export type { WaitlistEntry, NewWaitlistEntry } from './schema/waitlist';
